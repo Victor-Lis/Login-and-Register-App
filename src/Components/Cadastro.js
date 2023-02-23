@@ -7,17 +7,29 @@ export default function Cadastro() {
 
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
+  const [nome, setNome] = useState("")
+  const [idade, setIdade] = useState("")
 
   async function cadastrar(){
 
     if(email !== "" && senha !== ""){
 
-      await firebase.auth().createUserWithEmailAndPassword(email, senha).then(value => {
-        
-        alert("Usuário criado: "+value.user.email)
-        setEmail("")
-        setSenha("") 
-      
+      await firebase.auth().createUserWithEmailAndPassword(email, senha)
+      .then((value)=> {
+          //alert(value.user.uid);
+          firebase.database().ref('usuarios').child(value.user.uid).set({
+            nome: nome,
+            idade: idade,
+            email: value.user.email
+          })
+
+          alert('Usuario criado com sucesso!');
+          setNome('');
+          setIdade('');
+          setEmail('');
+          setSenha('');
+          return
+
       }).catch((error) => {
 
         if(error.code === "auth/weak-password"){
@@ -54,16 +66,17 @@ export default function Cadastro() {
         }
 
       })
+      
+      }
 
     }
-
-  }
-
 
   return (
     <View style={styles.container}>
       <TextInput style={styles.input} placeholder='Email: ' value={email} onChangeText={setEmail}/>
       <TextInput style={styles.input} placeholder='Senha: ' value={senha} onChangeText={setSenha}/>
+      <TextInput style={styles.input} placeholder='Nome: ' value={nome} onChangeText={setNome}/>
+      <TextInput style={styles.input} placeholder='Idade: ' value={idade} onChangeText={setIdade}/>
       <Button style={{borderRadius: 130}} title='Cadastrar' onPress={() => cadastrar()}/>
     </View>
   );

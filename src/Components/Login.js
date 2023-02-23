@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react'
-import { StyleSheet, View, TextInput, Button} from 'react-native';
+import { StyleSheet, View, TextInput, Button, Text } from 'react-native';
 import firebase from '../Connections/firebaseConnection';
 
 export default function Login() {
 
+  const [user, setUser] = useState("")
   const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
-  const [user, setUser] = useState("")
+  const [nome, setNome] = useState("")
+  const [idade, setIdade] = useState("")
 
   async function logar(){
 
@@ -16,9 +18,10 @@ export default function Login() {
       await firebase.auth().signInWithEmailAndPassword(email, senha).then(value => {
         
         alert("Usuário logado: "+value.user.email)
+        setUser(value.user.email)
         setEmail("")
         setSenha("") 
-        setUser(value.user.email)
+        getDatas(value.user.uid)
 
       }).catch((error) => {
 
@@ -68,9 +71,22 @@ export default function Login() {
 
   }
 
+  async function getDatas(uid){
+
+    await firebase.database().ref(`usuarios/${uid}`).on("value", (snapshot) => {
+  
+      setNome(snapshot.val().nome)
+      setIdade(snapshot.val().idade)
+
+    })
+
+  }
+
   async function deslogar(){
 
     await firebase.auth().signOut()
+    setNome('');
+    setIdade('');
     setUser("")
     alert("Usuário deslogado")
 
@@ -93,9 +109,19 @@ export default function Login() {
         <Button title='Logar' onPress={() => logar()}/>
 
       }
-      {user != "" &&
+      {user != "" && 
       
         <Button style={{marginTop: "5%"}} title='Deslogar' onPress={() => deslogar()}/>
+
+      }
+      {nome != "" && 
+      
+        <Text style={{marginTop: 20}}> Nome: {nome} </Text>
+
+      }
+      {idade != "" && 
+      
+        <Text style={{marginTop: 10}}> Idade: {idade} </Text>
 
       }
     </View>
@@ -120,5 +146,5 @@ const styles = StyleSheet.create({
     marginBottom: 7.5,
     borderRadius: 10
 
-  }
+  },
 });
