@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "third-app",
+    "name": "Teste de BD",
     "slug": "third-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "dev_victor.first_bd_app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ff8f05d8-f257-4607-97e4-e0794972b0ea"
+      }
     }
   }
 }
